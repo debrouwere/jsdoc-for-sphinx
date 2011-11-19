@@ -53,6 +53,9 @@ Constructor
 
 .. js:class:: {+ data.alias +}<if test="get_type(data) != 'Namespace '">{+ makeSignature(data.params) +}</if>
 
+<if test="data.augments.length">
+    Bases: <for each="item" in="data.augments">:js:class:`{+ item +}` </for>
+</if>
 <if test="data.params.length">
     <for each="item" in="data.params">
     :param {+ item.type +} {+ item.name +}: 

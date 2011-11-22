@@ -85,10 +85,8 @@ Methods
    class-methods
 
 <for each="data" in="ownMethods">
-{+ data.name +}
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. js:function:: {+ data.alias +}<if test="get_type(data) != 'Namespace '">{+ makeSignature(data.params) +}</if>
+.. js:function:: {+ data.name +}<if test="get_type(data) != 'Namespace '">{+ makeSignature(data.params) +}</if>
 
 <if test="data.params.length">
     <for each="item" in="data.params">
@@ -109,7 +107,7 @@ Methods
     </for>
 </if>
 
-{+ data.desc +}
+    {+ data.desc +}
 
 <if test="data.deprecated">
 .. deprecated:: {+ data.deprecated +}

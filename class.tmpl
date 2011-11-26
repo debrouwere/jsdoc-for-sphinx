@@ -102,12 +102,12 @@ Methods
 </if>
 <if test="data.returns.length">
     <for each="item" in="data.returns">
-    :returns {+ item.type +}:
-        {+ item.desc +} 
+    <if test="item.desc">:returns: {+ item.desc +}</if>
+    <if test="item.type">:rtype: {+ item.type +}</if>
     </for>
 </if>
 
-    {+ data.desc +}
+{+ indentLines(data.desc, 4) +}
 
 <if test="data.deprecated">
 .. deprecated:: {+ data.deprecated +}

@@ -27,6 +27,16 @@ function get_type (symbol) {
     return classType;
 }
 
+function indentLines(str, numchars) {
+    var spaces = Array(numchars+1).join(" ");
+    var indented = "";
+    var lines = str.split("\n");
+    for (var i=0; i<lines.length; i++) {
+        indented += spaces + lines[i].trim() + "\n";
+    }
+    return indented;
+}
+
 function trim (obj) {
     return obj.toString().replace(/^\s+|\s+$/g,"");
 }

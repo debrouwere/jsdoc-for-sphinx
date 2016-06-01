@@ -27,6 +27,16 @@ function get_type (symbol) {
     return classType;
 }
 
+function indentLines(str, numchars) {
+    var spaces = Array(numchars+1).join(" ");
+    var indented = "";
+    var lines = str.split("\n");
+    for (var i=0; i<lines.length; i++) {
+        indented += spaces + lines[i].trim() + "\n";
+    }
+    return indented;
+}
+
 function trim (obj) {
     return obj.toString().replace(/^\s+|\s+$/g,"");
 }
@@ -70,8 +80,12 @@ function resolveLinks(str, from) {
     return str;
 }
 
-function publish(symbolSet) {
-    var base = JSDOC.opt._[0];   
+function publish(symbolSet) {    
+    var base = JSDOC.opt._[0];
+    if (base.charAt(base.length-1) == '/') {
+        base = base.slice(0, -1);
+    }
+    
     publish.conf = {  // trailing slash expected for dirs
         ext:         ".html", // ===> .rst
         outDir:      JSDOC.opt.d || SYS.pwd+"../out/jsdoc/",
@@ -85,7 +99,8 @@ function publish(symbolSet) {
     // create the required templates
     try {
         var templates = {
-            'class': new JSDOC.JsPlate(publish.conf.templatesDir + "class.tmpl")
+            'class': new JSDOC.JsPlate(publish.conf.templatesDir + "class.tmpl"),
+            'toc': new JSDOC.JsPlate(publish.conf.templatesDir + "toc.tmpl")
         }
     }
     catch(e) {
@@ -115,6 +130,8 @@ function publish(symbolSet) {
         }
     }
     
+    var tocnames = new Array();
+    
     // create each of the class pages
     for (var i = 0, l = classes.length; i < l; i++) {
         var symbol = classes[i];
@@ -128,11 +145,24 @@ function publish(symbolSet) {
         var source = symbol.srcFile.replace(base, '').split('/').slice(0, -1).join('/');
         var docdir = new File(dir + source);
         docdir.mkdirs();
-        var filename = ((JSDOC.opt.u) ? Link.filemap[symbol.alias] : symbol.alias) + '.rst';
+        var basename = ((JSDOC.opt.u) ? Link.filemap[symbol.alias] : symbol.alias);
+        var filename = basename + '.rst';
+        
+        var tocname = source + '/' + basename;
+        if (tocname.charAt(0) == '/') {
+            tocname = tocname.slice(1);
+        }
+        tocnames.push(tocname);
         
         IO.saveFile(docdir, filename, template);
     }
-
+    
+    tocnames.sort();
+    var symbols = {};
+    symbols.entries = tocnames;
+    template = templates['toc'].process(symbols);
+    IO.saveFile(publish.conf.outDir, 'toc.rst', template);
+    
     var base = JSDOC.opt._[0];   
     // get an array version of the symbolset, useful for filtering
     var symbols = symbolSet.toArray();

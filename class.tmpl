@@ -1,17 +1,13 @@
-﻿{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isNamespace}).sort(makeSortby("name")); !}
+{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isNamespace}).sort(makeSortby("name")); !}
 {! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
 {! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
-
 {! var global = data; !}
+.. Classes and methods
 
-..
-    Classes and methods
-
-{+ get_type(data) +}{+ data.alias +}
+{+ data.alias +}
 ================================================================================
 
-..
-   class-title
+.. class-title
 
 <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
 {+ data.desc +}
@@ -59,13 +55,13 @@ Constructor
 <if test="data.params.length">
     <for each="item" in="data.params">
     :param {+ item.type +} {+ item.name +}: 
-        {+ item.desc +} <if test="item.defaultValue">(*Default*: {+item.defaultValue+})</if>
+{+ indentLines(item.desc, 8) +} <if test="item.defaultValue">(*Default*: {+item.defaultValue+})</if>
     </for>
 </if>
 <if test="data.exceptions.length">
     <for each="item" in="data.exceptions">
-    :throws {+ item.type +}:
-        {+ item.name +}: {+ item.desc +}
+    :throws<if test="item.type"> {+ item.type +}</if>:
+        <if test="item.name">{+ item.name +}: </if>{+ item.desc +}
     </for>
 </if>
 <if test="data.returns.length">
@@ -81,35 +77,32 @@ Constructor
 Methods
 -------
 
-..
-   class-methods
+.. class-methods
 
 <for each="data" in="ownMethods">
-{+ data.name +}
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. js:function:: {+ data.alias +}<if test="get_type(data) != 'Namespace '">{+ makeSignature(data.params) +}</if>
+.. js:function:: {+ data.name +}<if test="get_type(data) != 'Namespace '">{+ makeSignature(data.params) +}</if>
 
 <if test="data.params.length">
     <for each="item" in="data.params">
-    :param {+ item.type +} {+ item.name +}: 
-        {+ item.desc +} <if test="item.defaultValue">(*Default*: {+item.defaultValue+})</if>
+    :param<if test="item.type"> {+ item.type +}</if><if test="item.name"> {+ item.name +}</if>: 
+{+ indentLines(item.desc, 8) +} <if test="item.defaultValue">(*Default*: {+item.defaultValue+})</if>
     </for>
 </if>
 <if test="data.exceptions.length">
     <for each="item" in="data.exceptions">
-    :throws {+ item.type +}:
-        {+ item.name +}: {+ item.desc +}
+    :throws<if test="item.type"> {+ item.type +}</if>:
+        <if test="item.name">{+ item.name +}: </if>{+ item.desc +}
     </for>
 </if>
 <if test="data.returns.length">
     <for each="item" in="data.returns">
-    :returns {+ item.type +}:
-        {+ item.desc +} 
+    <if test="item.desc">:returns: {+ item.desc +}</if>
+    <if test="item.type">:rtype: {+ item.type +}</if>
     </for>
 </if>
 
-{+ data.desc +}
+{+ indentLines(data.desc, 4) +}
 
 <if test="data.deprecated">
 .. deprecated:: {+ data.deprecated +}
@@ -148,8 +141,7 @@ Methods
 Attributes
 ----------
 
-..
-   class-attributes
+.. class-attributes
 
 <for each="member" in="ownProperties">
 {+ member.name +}
